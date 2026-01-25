@@ -1,0 +1,7 @@
+{
+  "name": "LeaseSwap",
+  "description": "A  lease exchange platform allowing users to swap apartment rentals through a discovery interface",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
