@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Dimensions, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Dimensions, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   interpolate,
   runOnJS,
@@ -28,6 +28,16 @@ export function SwipeCard({ listing, onSwipeLeft, onSwipeRight }: Props) {
   const translateY = useSharedValue(0);
 
   const threshold = useMemo(() => SCREEN_W * 0.28, []);
+
+  // Simple image carousel: tap left/right half to change image
+  const [imgIdx, setImgIdx] = useState(0);
+  useEffect(() => {
+    setImgIdx(0);
+    // Reset card position when listing changes (prevents blank/offset card after a swipe)
+    translateX.value = 0;
+    translateY.value = 0;
+  }, [listing.id]);
+  const currentImage = listing.images[Math.min(imgIdx, listing.images.length - 1)] ?? listing.images[0];
 
   const gesture = Gesture.Pan()
     .onUpdate((e) => {
@@ -83,7 +93,7 @@ export function SwipeCard({ listing, onSwipeLeft, onSwipeRight }: Props) {
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, cardStyle]}>
         <ImageBackground
-          source={{ uri: listing.images[0] }}
+          source={{ uri: currentImage }}
           style={styles.bg}
           imageStyle={styles.bgImg}
         >
@@ -93,6 +103,19 @@ export function SwipeCard({ listing, onSwipeLeft, onSwipeRight }: Props) {
             locations={[0, 0.55, 1]}
           />
 
+          {/* Story-style progress bars */}
+          <View style={styles.progressRow}>
+            {listing.images.map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.progressBar,
+                  { backgroundColor: i === imgIdx ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)' },
+                ]}
+              />
+            ))}
+          </View>
+
           {/* Badges */}
           <View style={styles.badgesRow}>
             {listing.verified && (
@@ -100,9 +123,26 @@ export function SwipeCard({ listing, onSwipeLeft, onSwipeRight }: Props) {
                 <Text style={styles.pillText}>VERIFIED</Text>
               </View>
             )}
-            <View style={[styles.pill, { backgroundColor: 'rgba(255,255,255,0.16)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)' }]}>
+            <View
+              style={[
+                styles.pill,
+                { backgroundColor: 'rgba(255,255,255,0.16)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)' },
+              ]}
+            >
               <Text style={styles.pillText}>NEW</Text>
             </View>
+          </View>
+
+          {/* Tap areas for images */}
+          <View style={styles.tapRow}>
+            <Pressable
+              style={styles.tapHalf}
+              onPress={() => setImgIdx((v) => Math.max(0, v - 1))}
+            />
+            <Pressable
+              style={styles.tapHalf}
+              onPress={() => setImgIdx((v) => Math.min(listing.images.length - 1, v + 1))}
+            />
           </View>
 
           {/* Swipe overlays */}
@@ -141,9 +181,28 @@ const styles = StyleSheet.create({
   },
   bg: { flex: 1, justifyContent: 'flex-end' },
   bgImg: { borderRadius: 22 },
-  badgesRow: { position: 'absolute', top: 14, left: 14, flexDirection: 'row', gap: 8 },
+
+  progressRow: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    right: 12,
+    flexDirection: 'row',
+    gap: 6,
+  },
+  progressBar: {
+    height: 3,
+    borderRadius: 2,
+    flex: 1,
+  },
+
+  badgesRow: { position: 'absolute', top: 22, left: 14, flexDirection: 'row', gap: 8 },
   pill: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
   pillText: { color: '#fff', fontWeight: '900', fontSize: 10, letterSpacing: 1 },
+
+  tapRow: { ...StyleSheet.absoluteFillObject, flexDirection: 'row' },
+  tapHalf: { flex: 1 },
+
   bottom: { padding: 16 },
   price: { color: '#fff', fontSize: 32, fontWeight: '900' },
   priceUnit: { fontSize: 16, fontWeight: '700', opacity: 0.8 },
