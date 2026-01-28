@@ -12,7 +12,11 @@ export const DUMMY_LISTINGS: Listing[] = [
     parking: 1,
     verified: true,
     intent: 'swap',
-    images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1000'],
+    images: [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&q=80&w=1000',
+    ],
     description: 'Modern minimalist living room with large windows and city view',
   },
   {
@@ -26,7 +30,11 @@ export const DUMMY_LISTINGS: Listing[] = [
     parking: 1,
     verified: true,
     intent: 'swap',
-    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000'],
+    images: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1536376074432-bf12177d4f4f?auto=format&fit=crop&q=80&w=1000',
+    ],
     description: 'Penthouse with panoramic ocean views and luxury finishes',
   },
   {
@@ -40,7 +48,11 @@ export const DUMMY_LISTINGS: Listing[] = [
     parking: 0,
     verified: true,
     intent: 'swap',
-    images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000'],
+    images: [
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&q=80&w=1000',
+    ],
     description: 'Converted warehouse loft with high ceilings and art-deco vibes',
   },
   {
@@ -54,7 +66,11 @@ export const DUMMY_LISTINGS: Listing[] = [
     parking: 0,
     verified: false,
     intent: 'swap',
-    images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1000'],
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000',
+    ],
     description: 'Cozy loft with exposed brick and industrial vibes',
   },
 ];
