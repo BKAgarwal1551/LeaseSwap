@@ -3,9 +3,9 @@ import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-na
 import { useTheme } from '../theme/useTheme';
 
 // NOTE:
-// For v1 we ship a local list so the UX works without keys.
-// When Bhavesh provides a Google Places API key, we’ll swap this
-// to Google Places Autocomplete (or another provider).
+// For v1 we allow manual suburb entry.
+// We optionally show suggestions from a small local list (no paid API).
+// Later we can upgrade to a real Places API if desired.
 const AUS_SUBURBS = [
   'Surry Hills, NSW',
   'Bondi Beach, NSW',
@@ -44,16 +44,18 @@ export function SuburbAutocomplete({ value, onChange, placeholder }: Props) {
           onChange(t);
           setOpen(true);
         }}
-        placeholder={placeholder ?? 'e.g. Surry Hills, NSW'}
+        placeholder={placeholder ?? 'Type suburb (e.g. Surry Hills)'}
         placeholderTextColor={colors.muted}
+        autoCorrect={false}
+        autoCapitalize="words"
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
       />
 
+      {/* Optional suggestions (no paid API). User can also ignore and type freely. */}
       {open && suggestions.length > 0 && (
-        <View style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }]}
-        >
+        <View style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <FlatList
             keyboardShouldPersistTaps="handled"
             data={suggestions}
@@ -72,10 +74,6 @@ export function SuburbAutocomplete({ value, onChange, placeholder }: Props) {
           />
         </View>
       )}
-
-      <Text style={{ marginTop: 6, color: colors.muted, fontSize: 11 }}>
-        Autocomplete is running in “local list” mode. We’ll upgrade to Google Places when API key is added.
-      </Text>
     </View>
   );
 }
