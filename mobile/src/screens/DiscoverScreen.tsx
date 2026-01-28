@@ -1,21 +1,35 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../theme/useTheme';
 import { DUMMY_LISTINGS } from '../data/dummy';
 import type { RootStackParamList } from '../navigation/types';
 import { SwipeCard } from '../components/SwipeCard';
+import { fetchListings } from '../firebase/listings';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tabs'>;
 
 export function DiscoverScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const [idx, setIdx] = useState(0);
+  const [remoteListings, setRemoteListings] = useState(DUMMY_LISTINGS);
 
-  const listing = useMemo(() => DUMMY_LISTINGS[idx % DUMMY_LISTINGS.length], [idx]);
+  useEffect(() => {
+    // Try Firebase first; fall back to dummy data if not configured.
+    (async () => {
+      try {
+        const fetched = await fetchListings(30);
+        if (fetched?.length) setRemoteListings(fetched);
+      } catch {
+        // ignore in demo mode
+      }
+    })();
+  }, []);
+
+  const listing = useMemo(() => remoteListings[idx % remoteListings.length], [idx, remoteListings]);
 
   const onLike = () => {
-    // simulate match every 3 likes
+    // simulate match every 3 likes (until we implement real Like/Match in DB)
     if (idx % 3 === 0) {
       navigation.navigate('MatchFound');
     }

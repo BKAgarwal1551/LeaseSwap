@@ -5,6 +5,7 @@ import { useTheme } from '../theme/useTheme';
 import type { RootStackParamList } from '../navigation/types';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SuburbAutocomplete } from '../components/SuburbAutocomplete';
+import { createListing } from '../firebase/listings';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateListing'>;
 
@@ -13,6 +14,8 @@ export function CreateListingScreen({ navigation }: Props) {
   const [suburb, setSuburb] = useState('');
   const [rentWeekly, setRentWeekly] = useState('');
   const [desc, setDesc] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}> 
@@ -49,7 +52,42 @@ export function CreateListingScreen({ navigation }: Props) {
         <View style={{ height: 24 }} />
         <PrimaryButton label="Save Draft" variant="secondary" onPress={() => navigation.goBack()} />
         <View style={{ height: 12 }} />
-        <PrimaryButton label="Publish (free for now)" onPress={() => navigation.navigate('Tabs' as never)} />
+        <PrimaryButton
+          label={saving ? 'Publishing…' : 'Publish (free for now)'}
+          onPress={async () => {
+            setError(null);
+            if (!suburb.trim() || !rentWeekly.trim()) {
+              setError('Please enter suburb and weekly rent.');
+              return;
+            }
+            setSaving(true);
+            try {
+              await createListing({
+                ownerId: 'demo-user',
+                suburb: suburb.trim(),
+                state: suburb.includes(',') ? suburb.split(',')[1].trim() : 'AU',
+                rentWeekly: Number(rentWeekly),
+                beds: 1,
+                baths: 1,
+                parking: 0,
+                images: [
+                  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1000',
+                ],
+                verified: false,
+                description: desc.trim() || 'Listing created from mobile app',
+                intent: 'swap',
+              });
+              navigation.navigate('Tabs' as never);
+            } catch (e: any) {
+              setError(e?.message ?? 'Failed to publish listing (Firebase not configured?)');
+            } finally {
+              setSaving(false);
+            }
+          }}
+        />
+        {error && (
+          <Text style={{ marginTop: 12, color: '#EF4444', fontWeight: '700' }}>{error}</Text>
+        )}
       </ScrollView>
     </View>
   );
