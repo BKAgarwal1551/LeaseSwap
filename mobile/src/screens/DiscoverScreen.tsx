@@ -50,7 +50,7 @@ export function DiscoverScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.cardWrap}>
-        <SwipeCard listing={listing} onSwipeLeft={onNope} onSwipeRight={onLike} />
+        <SwipeCard key={listing.id} listing={listing} onSwipeLeft={onNope} onSwipeRight={onLike} />
       </View>
 
       <View style={styles.actions}>

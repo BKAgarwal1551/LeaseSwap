@@ -31,7 +31,12 @@ export function SwipeCard({ listing, onSwipeLeft, onSwipeRight }: Props) {
 
   // Simple image carousel: tap left/right half to change image
   const [imgIdx, setImgIdx] = useState(0);
-  useEffect(() => setImgIdx(0), [listing.id]);
+  useEffect(() => {
+    setImgIdx(0);
+    // Reset card position when listing changes (prevents blank/offset card after a swipe)
+    translateX.value = 0;
+    translateY.value = 0;
+  }, [listing.id]);
   const currentImage = listing.images[Math.min(imgIdx, listing.images.length - 1)] ?? listing.images[0];
 
   const gesture = Gesture.Pan()
